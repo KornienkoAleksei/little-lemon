@@ -1,5 +1,9 @@
 package com.example.littlelemon
 
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.*
@@ -22,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -29,6 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
+import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.littlelemon.ui.theme.LittleLemonGray
 import com.example.littlelemon.ui.theme.LittleLemonGreen
 import com.example.littlelemon.ui.theme.LittleLemonOrange
@@ -38,11 +47,14 @@ import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @Composable
-fun Onboarding() {
+fun Onboarding(navController: NavController,  modifier: Modifier = Modifier, ) {
     var userFirstName by remember { mutableStateOf("") };
     var userLastName by remember { mutableStateOf("") };
     var userEmail by remember { mutableStateOf("") };
-
+    val context = LocalContext.current
+    val sharedPreferences by lazy {
+        context.getSharedPreferences("LittleLemon", MODE_PRIVATE)
+    }
     Surface() {
         Column(
             modifier = Modifier
@@ -69,7 +81,28 @@ fun Onboarding() {
                     onValueChange = { userEmail = it });
             }
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    if (userFirstName.isBlank() || userLastName.isBlank() || userEmail.isBlank()) {
+                        Toast.makeText(
+                            context,
+                            "Registration unsuccessful. Please enter all data.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Registration successful!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        sharedPreferences.edit(commit = true) {
+                            putBoolean("Login", true);
+                            putString("userFirstName", userFirstName);
+                            putString("userLastName", userLastName);
+                            putString("userEmail", userEmail);
+                        }
+                        navController.navigate(Home.route);
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = LittleLemonYellow,
                     disabledBackgroundColor = LittleLemonOrange,
@@ -179,5 +212,5 @@ fun OnboardingOutlinedTextField(
 @Preview (showBackground = true)
 @Composable
 fun OnboardingPreview(){
-    Onboarding()
+    Onboarding(navController = rememberNavController())
 }
