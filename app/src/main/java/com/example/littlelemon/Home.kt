@@ -3,6 +3,7 @@
 package com.example.littlelemon
 
 import android.content.Context
+import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -54,10 +55,7 @@ fun Home(
     modifier: Modifier = Modifier,
 ) {
     var searchPhrase by remember { mutableStateOf("") };
-    val context = LocalContext.current
-    val sharedPreferences by lazy {
-        context.getSharedPreferences("LittleLemon", Context.MODE_PRIVATE)
-    }
+    var chooseCategory by remember { mutableStateOf("") };
     Column () {
        HomeHeader(navController = navController);
         HomeHero(value = searchPhrase,
@@ -76,19 +74,19 @@ fun Home(
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
             ) {
-            HomeCategoryButton(label = "Starters")
-            HomeCategoryButton(label = "Mains")
-            HomeCategoryButton(label = "Desserts")
-            HomeCategoryButton(label = "Drinks")
+            HomeCategoryButton(label = "Starters", onClick = { if (chooseCategory == "Starters") { chooseCategory = "" } else { chooseCategory = "Starters"; searchPhrase = ""; } }, pushed = chooseCategory)
+            HomeCategoryButton(label = "Mains", onClick = { if (chooseCategory == "Mains") { chooseCategory = "" } else { chooseCategory = "Mains"; searchPhrase = "";} }, pushed = chooseCategory)
+            HomeCategoryButton(label = "Desserts", onClick = { if (chooseCategory == "Desserts") { chooseCategory = "" } else {chooseCategory = "Desserts"; searchPhrase = "";} }, pushed = chooseCategory)
+            HomeCategoryButton(label = "Drinks", onClick = { if (chooseCategory == "Drinks") { chooseCategory = "" } else {chooseCategory = "Drinks"; searchPhrase = "";} }, pushed = chooseCategory)
         }
-        var menuItems: List<MenuItemRoom>;
-
+        var menuItems: List<MenuItemRoom> = database;
         if (searchPhrase.isNotEmpty()) {
+            chooseCategory = "";
             menuItems = database.filter { it.title.contains(searchPhrase, ignoreCase = true) }
-        } else {
-            menuItems = database
         }
-
+        if (chooseCategory.isNotEmpty()) {
+            menuItems = database.filter { it.category.contains(chooseCategory, ignoreCase = true) }
+        }
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -168,7 +166,6 @@ fun HomeHero(
             ) {
                 Text(
                     text = "Chicago",
-                    //lineHeight = 0.5.em,
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.White,
                 )
@@ -234,11 +231,22 @@ fun HomeHero(
 @Composable
 fun HomeCategoryButton (
     label: String,
+    onClick: () -> Unit,
+    pushed: String,
 ){
+    var buttonBackground: Color;
+    var buttonText: Color;
+    if (pushed == label) {
+        buttonBackground = LittleLemonGreen;
+        buttonText = Color.White;
+    }else {
+            buttonBackground = LittleLemonGray;
+            buttonText = LittleLemonGreen;
+    }
     Button(
-        onClick = {/*TO DO*/},
+        onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = LittleLemonGray,
+            backgroundColor = buttonBackground,
             disabledBackgroundColor = LittleLemonOrange,
         ),
         shape = RoundedCornerShape(16.dp),
@@ -249,7 +257,7 @@ fun HomeCategoryButton (
             text = label,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.button,
-            color = LittleLemonGreen,
+            color = buttonText,
         )
     }
 }

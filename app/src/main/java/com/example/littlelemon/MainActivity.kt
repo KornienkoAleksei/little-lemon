@@ -68,16 +68,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    //get menu from server
-
                     //load database
                     val databaseMenuItems by database.menuItemDao().getAll().observeAsState(emptyList())
 
                     //create a navigation
                     val navController = rememberNavController()
                     Navigation(navController, databaseMenuItems)
-
-
                 }
             }
         }
