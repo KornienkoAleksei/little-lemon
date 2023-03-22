@@ -26,6 +26,6 @@ interface MenuItemDao {
 }
 
 @Database(entities = [MenuItemRoom::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
+abstract class MenuDatabase : RoomDatabase() {
     abstract fun menuItemDao(): MenuItemDao
 }

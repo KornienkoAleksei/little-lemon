@@ -9,9 +9,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Database
 
 @Composable
-fun Navigation (navController: NavHostController) {
+fun Navigation (navController: NavHostController, databaseMenuItems: List<MenuItemRoom>) {
     val context = LocalContext.current
     val sharedPreferences by lazy {
         context.getSharedPreferences("LittleLemon", Context.MODE_PRIVATE)
@@ -25,7 +26,7 @@ fun Navigation (navController: NavHostController) {
             Onboarding(navController = navController)
         }
         composable(Home.route){
-            Home(navController = navController)
+            Home(navController = navController, database = databaseMenuItems)
         }
         composable(Profile.route){
             Profile(navController = navController)
