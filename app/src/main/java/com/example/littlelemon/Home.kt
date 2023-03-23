@@ -200,6 +200,7 @@ fun HomeHero(
                 Text(
                     text = if (focusState) "" else "Enter search phrase",
                     style = MaterialTheme.typography.button,
+                    modifier = Modifier.padding(start = 16.dp)
                 )
             },
 
