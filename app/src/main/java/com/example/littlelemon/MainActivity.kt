@@ -80,12 +80,8 @@ class MainActivity : ComponentActivity() {
 
 
         //if database is empty download database from server and save it
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (database.menuItemDao().isEmpty()) {
-                val menuItemsNetwork = fetchMenu()
-                saveMenuToDatabase(menuItemsNetwork)
-            }
-        }
+
+
 
 
     }
